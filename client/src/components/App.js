@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { changeOrder, changeCategory, fetchCategory, fetchPosts } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
 import NotFound from './NotFound';
 import CategorySelect from  './CategorySelect';
@@ -10,11 +12,7 @@ import './App.css';
 class App extends Component {
 
   state = {
-    categories: [],
-    allPosts: [],
-    posts: [],
-    category: "all",
-    sortOrder: "voteScore"
+    allPosts: []
   }
 
   componentDidMount(){
@@ -24,22 +22,23 @@ class App extends Component {
   getCategories(){
     ReadableAPI.getAllCategories().then(catlist => {
       const categories = catlist.categories;
-      this.setState({categories});
+      this.props.onfetchCategory({categories})
       this.getPosts();
     });
   }
 
   getPosts(){
     ReadableAPI.getAllPost().then(posts => {
-      this.setState({allPosts: posts})
-      this.sortedData(posts, this.state.sortOrder, this.state.category)
+      this.props.onfetchPosts({posts})
     });
   }
 
-  sortedData(posts, sortOrder, category){
-    posts = posts.sort((a, b) => b[sortOrder] - a[sortOrder]);
-    posts = category !== "all" ? posts.filter(post => post.category === category) : posts;
-    this.setState({posts})
+  sortedData(){
+    const { posts, categoryList, orderList } = this.props
+    let allPosts = posts.posts;
+    allPosts = allPosts.sort((a, b) => b[orderList.sortOrder] - a[orderList.sortOrder]);
+    allPosts = categoryList.category !== "all" ? allPosts.filter(post => post.category === categoryList.category) : allPosts;
+    return allPosts
   }
 
   getComments(id){
@@ -49,30 +48,29 @@ class App extends Component {
   }
 
   render() {
+    const {orderList, onOrderChange, categoryList, onCategoryChange} = this.props
     return (
         <div className="container">
-            <div className="page-header">
-                <h1>Readable</h1>
-            </div>
+        <div className="page-header">
+            <h1>Readable</h1>
+        </div>
         <Switch>
           <Route exact path="/" render={() =>
             <div>
               <div className="row">
                 <div className="col-md-2">
                   <CategorySelect 
-                    categories={this.state.categories} 
-                    category={this.state.category} 
+                    categories={categoryList.categories} 
+                    category={categoryList.category} 
                     onCategoryChange={category => {
-                      this.setState({category})
-                      this.sortedData(this.state.allPosts, this.state.sortedData, category)
+                      onCategoryChange({category})
                     }}/>
                 </div>
                 <div className="col-md-3">
                     <OrderSelect 
-                      sortOrder={this.state.sortOrder} 
+                      orderList={orderList.all}
                       onOrderChange={sortOrder => {
-                        this.setState({sortOrder})
-                        this.sortedData(this.state.allPosts, sortOrder, this.state.category)
+                        onOrderChange({sortOrder})
                     }}/>        
                   </div>
                 <div className="col-md-6">
@@ -83,7 +81,7 @@ class App extends Component {
               <div className="col-md-12">
                  <ol>
                   {
-                    this.state.posts.map(post => {
+                    this.sortedData().map(post => {
                       const timeStamp = moment(post.timestamp).format('MMMM DD, YYYY HH:MM');
                       return <li onClick={() => {this.getComments(post.id)}} key={post.id} className="post-container">
                         <h4><span className="badge">{post.voteScore}</span> {post.title}</h4>
@@ -104,4 +102,23 @@ class App extends Component {
   }
 }
 
-export default App;
+
+function mapStateToProps(state){
+  return{
+    orderList: state.order,
+    categoryList: state.categories,
+    posts: state.posts
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    onOrderChange: (data) => dispatch(changeOrder(data)),
+    onCategoryChange: (data) => dispatch(changeCategory(data)),
+    onfetchCategory: (data) => dispatch(fetchCategory(data)),
+    onfetchPosts: (data) => dispatch(fetchPosts(data))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+

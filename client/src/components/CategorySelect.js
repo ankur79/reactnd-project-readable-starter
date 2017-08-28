@@ -13,9 +13,9 @@ const CategorySelect = ({categories, onCategoryChange, category}) => {
 };
 
 CategorySelect.propTypes = {
-    categories: PropTypes.array.isRequired,
-    onCategoryChange: PropTypes.func.isRequired,
-    category: PropTypes.string.isRequired
+    categories: PropTypes.array,
+    onCategoryChange: PropTypes.func,
+    category: PropTypes.string
 };
 
 export default CategorySelect
