@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { changeOrder, changeCategory, fetchCategory, fetchPosts } from '../actions'
+import { changeOrder, changeCategory, fetchCategory, fetchPosts, updateLocation } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
 import NotFound from './NotFound';
+import AddPost from './AddPost';
 import CategorySelect from  './CategorySelect';
 import OrderSelect from  './OrderSelect';
 import * as moment from 'moment';
@@ -74,7 +75,7 @@ class App extends Component {
                     }}/>        
                   </div>
                 <div className="col-md-6">
-                    <button className="btn btn-primary">Add Post</button>
+                    <Link to="/posts/add" className="btn btn-primary">Add Post</Link>
                 </div>
               </div>
               <div className="row">
@@ -83,18 +84,25 @@ class App extends Component {
                   {
                     this.sortedData().map(post => {
                       const timeStamp = moment(post.timestamp).format('MMMM DD, YYYY HH:MM');
-                      return <li onClick={() => {this.getComments(post.id)}} key={post.id} className="post-container">
-                        <h4><span className="badge">{post.voteScore}</span> {post.title}</h4>
-                        <div>{post.body}</div>
-                        <div className="time-stamp">{timeStamp}</div>
-                      </li>
+                      return <Link key={post.id} to={`/posts/${post.id}`}>
+                        <li className="post-container">
+                          <h4><span className="badge">{post.voteScore}</span> {post.title}</h4>
+                          <div>{post.body}</div>
+                          <div className="time-stamp">{timeStamp}</div>
+                        </li>
+                      </Link>
                     })
                   }
                  </ol>
                  </div>   
               </div>
             </div>}
-           /> 
+           />
+          <Route path="/posts/:id" render={({history})=>{
+            console.log(history)
+            return <div>POST DETAILS</div>
+          }}/>  
+          <Route path="/posts/add" component={AddPost}/> 
           <Route component={NotFound}/>
         </Switch>
         </div>
@@ -116,7 +124,8 @@ function mapDispatchToProps (dispatch) {
     onOrderChange: (data) => dispatch(changeOrder(data)),
     onCategoryChange: (data) => dispatch(changeCategory(data)),
     onfetchCategory: (data) => dispatch(fetchCategory(data)),
-    onfetchPosts: (data) => dispatch(fetchPosts(data))
+    onfetchPosts: (data) => dispatch(fetchPosts(data)),
+    onupdateLocation: (data) => dispatch(updateLocation(data))
   }
 }
 
