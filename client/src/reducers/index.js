@@ -2,7 +2,8 @@ import { combineReducers } from 'redux'
 import order from './order';
 import categories from './categories';
 import posts from './posts';
-import routerReducer from './location';
+import selectedPost from './post';
+import {routerReducer} from 'react-router-redux';
 
 
-export default combineReducers({order, categories, posts, router: routerReducer})
+export default combineReducers({order, categories, posts, selectedPost, router: routerReducer})

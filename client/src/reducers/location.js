@@ -16,6 +16,7 @@ const initialState = {
  */
 export default function routerReducer(state = initialState, { type, payload } = {}) {
   if (type === LOCATION_CHANGE) {
+    console.log(payload)
     return { ...state, locationBeforeTransitions: payload }
   }
 

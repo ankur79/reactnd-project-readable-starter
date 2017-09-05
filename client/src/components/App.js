@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { changeOrder, changeCategory, fetchCategory, fetchPosts, updateLocation } from '../actions'
+import { changeOrder, changeCategory, fetchCategory, fetchPosts, fetchPost } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
 import NotFound from './NotFound';
 import AddPost from './AddPost';
+import SelectedPost  from './SelectedPost';
 import CategorySelect from  './CategorySelect';
 import OrderSelect from  './OrderSelect';
 import * as moment from 'moment';
@@ -48,15 +49,26 @@ class App extends Component {
     });
   }
 
+  getselectedPost(id){
+    const len = Object.keys(this.props.selectedPost.post).length;
+    console.log(len)
+    if(len === 0){
+      ReadableAPI.getPost(id).then(post => {
+        this.props.onfetchPost({post})
+      });
+    }
+  }
+
   render() {
-    const {orderList, onOrderChange, categoryList, onCategoryChange} = this.props
+    const {orderList, onOrderChange, categoryList, onCategoryChange, selectedPost} = this.props
     return (
         <div className="container">
         <div className="page-header">
             <h1>Readable</h1>
         </div>
         <Switch>
-          <Route exact path="/" render={() =>
+        
+          <Route exact path="/" render={(history) =>
             <div>
               <div className="row">
                 <div className="col-md-2">
@@ -98,11 +110,15 @@ class App extends Component {
               </div>
             </div>}
            />
-          <Route path="/posts/:id" render={({history})=>{
-            console.log(history)
-            return <div>POST DETAILS</div>
-          }}/>  
+
+
           <Route path="/posts/add" component={AddPost}/> 
+
+          <Route path="/posts/:id" render={(props) => {
+            //console.log(props)
+            return <SelectedPost {...props} post={selectedPost} getselectedPost={(id) => this.getselectedPost(id)}/> 
+          }} />
+
           <Route component={NotFound}/>
         </Switch>
         </div>
@@ -115,7 +131,8 @@ function mapStateToProps(state){
   return{
     orderList: state.order,
     categoryList: state.categories,
-    posts: state.posts
+    posts: state.posts,
+    selectedPost: state.selectedPost
   }
 }
 
@@ -125,7 +142,7 @@ function mapDispatchToProps (dispatch) {
     onCategoryChange: (data) => dispatch(changeCategory(data)),
     onfetchCategory: (data) => dispatch(fetchCategory(data)),
     onfetchPosts: (data) => dispatch(fetchPosts(data)),
-    onupdateLocation: (data) => dispatch(updateLocation(data))
+    onfetchPost: (data) => dispatch(fetchPost(data))
   }
 }
 

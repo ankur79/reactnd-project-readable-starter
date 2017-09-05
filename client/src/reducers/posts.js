@@ -2,7 +2,7 @@ import {FETCH_POSTS} from '../actions'
 
 const initialOrderState = {posts: []}
 
-function categories (state = initialOrderState, action) {
+function posts (state = initialOrderState, action) {
   switch (action.type) {
     case FETCH_POSTS :
       return {posts: action.posts} 
@@ -11,4 +11,4 @@ function categories (state = initialOrderState, action) {
   }
 }
 
-export default categories
+export default posts
