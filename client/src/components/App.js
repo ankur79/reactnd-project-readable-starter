@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { Route, Switch, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { changeOrder, changeCategory, fetchCategory, fetchPosts, fetchPost } from '../actions'
+import { changeOrder, changeCategory, categoryFetchData, postsFetchData, fetchPost } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
-import NotFound from './NotFound';
-import AddPost from './AddPost';
-import SelectedPost  from './SelectedPost';
+
 import CategorySelect from  './CategorySelect';
 import OrderSelect from  './OrderSelect';
 import * as moment from 'moment';
@@ -22,17 +20,12 @@ class App extends Component {
   }
 
   getCategories(){
-    ReadableAPI.getAllCategories().then(catlist => {
-      const categories = catlist.categories;
-      this.props.onfetchCategory({categories})
-      this.getPosts();
-    });
+    this.props.oncategoryFetchData();
+    this.props.onpostsFetchData();
   }
 
   getPosts(){
-    ReadableAPI.getAllPost().then(posts => {
-      this.props.onfetchPosts({posts})
-    });
+    this.props.onpostsFetchData();
   }
 
   sortedData(){
@@ -51,7 +44,6 @@ class App extends Component {
 
   getselectedPost(id){
     const len = Object.keys(this.props.selectedPost.post).length;
-    console.log(len)
     if(len === 0){
       ReadableAPI.getPost(id).then(post => {
         this.props.onfetchPost({post})
@@ -60,15 +52,19 @@ class App extends Component {
   }
 
   render() {
-    const {orderList, onOrderChange, categoryList, onCategoryChange, selectedPost} = this.props
+    const {orderList, onOrderChange, categoryList, onCategoryChange, loadreducer} = this.props
+
     return (
-        <div className="container">
-        <div className="page-header">
-            <h1>Readable</h1>
-        </div>
-        <Switch>
-        
-          <Route exact path="/" render={(history) =>
+      <div >
+        <div >
+          {
+            loadreducer.isLoading ? 
+              <div className="pre-loader">
+                <i className="fa-li fa fa-spinner fa-spin"></i>
+              </div> : ""
+          }
+        </div>        
+
             <div>
               <div className="row">
                 <div className="col-md-2">
@@ -108,19 +104,7 @@ class App extends Component {
                  </ol>
                  </div>   
               </div>
-            </div>}
-           />
-
-
-          <Route path="/posts/add" component={AddPost}/> 
-
-          <Route path="/posts/:id" render={(props) => {
-            //console.log(props)
-            return <SelectedPost {...props} post={selectedPost} getselectedPost={(id) => this.getselectedPost(id)}/> 
-          }} />
-
-          <Route component={NotFound}/>
-        </Switch>
+            </div>
         </div>
     );
   }
@@ -132,7 +116,8 @@ function mapStateToProps(state){
     orderList: state.order,
     categoryList: state.categories,
     posts: state.posts,
-    selectedPost: state.selectedPost
+    selectedPost: state.selectedPost,
+    loadreducer: state.loadreducer
   }
 }
 
@@ -140,8 +125,8 @@ function mapDispatchToProps (dispatch) {
   return {
     onOrderChange: (data) => dispatch(changeOrder(data)),
     onCategoryChange: (data) => dispatch(changeCategory(data)),
-    onfetchCategory: (data) => dispatch(fetchCategory(data)),
-    onfetchPosts: (data) => dispatch(fetchPosts(data)),
+    oncategoryFetchData: () => dispatch(categoryFetchData()),
+    onpostsFetchData: () => dispatch(postsFetchData()),
     onfetchPost: (data) => dispatch(fetchPost(data))
   }
 }
