@@ -13,16 +13,23 @@ li{
 	list-style: none;
 }
 
-.post-container{
+.content-container{
 	padding: 10px;
     margin: 20px 0;
     border: 1px solid #eee;
     border-left-width: 5px;
     border-radius: 3px;
+}
+
+.content-container.post{
     border-left-color: #428bca;
 }
 
-.post-container h4 {
+.content-container.comment{
+    border-left-color: #1C704B;
+}
+
+.content-container h4 {
     color: #428bca;
 }
 
@@ -37,4 +44,10 @@ li{
     left: 45%;
     color: #337ab7;
     font-size: 30px;
+}
+
+.vote-button{
+    display: flex;
+    flex-direction: column;
+    width:25px;
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { changeOrder, changeCategory, categoryFetchData, postsFetchData, fetchPost } from '../actions'
+import { changeOrder, changeCategory, categoryFetchData, postsFetchData } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
 
 import CategorySelect from  './CategorySelect';
@@ -16,15 +16,11 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.getCategories();
+    this.initData();
   }
 
-  getCategories(){
+  initData(){
     this.props.oncategoryFetchData();
-    this.props.onpostsFetchData();
-  }
-
-  getPosts(){
     this.props.onpostsFetchData();
   }
 
@@ -40,15 +36,6 @@ class App extends Component {
     ReadableAPI.getComments(id).then(comments => {
       console.log(comments)
     });
-  }
-
-  getselectedPost(id){
-    const len = Object.keys(this.props.selectedPost.post).length;
-    if(len === 0){
-      ReadableAPI.getPost(id).then(post => {
-        this.props.onfetchPost({post})
-      });
-    }
   }
 
   render() {
@@ -93,7 +80,7 @@ class App extends Component {
                     this.sortedData().map(post => {
                       const timeStamp = moment(post.timestamp).format('MMMM DD, YYYY HH:MM');
                       return <Link key={post.id} to={`/posts/${post.id}`}>
-                        <li className="post-container">
+                        <li className="post content-container">
                           <h4><span className="badge">{post.voteScore}</span> {post.title}</h4>
                           <div>{post.body}</div>
                           <div className="time-stamp">{timeStamp}</div>
@@ -126,8 +113,7 @@ function mapDispatchToProps (dispatch) {
     onOrderChange: (data) => dispatch(changeOrder(data)),
     onCategoryChange: (data) => dispatch(changeCategory(data)),
     oncategoryFetchData: () => dispatch(categoryFetchData()),
-    onpostsFetchData: () => dispatch(postsFetchData()),
-    onfetchPost: (data) => dispatch(fetchPost(data))
+    onpostsFetchData: () => dispatch(postsFetchData())
   }
 }
 

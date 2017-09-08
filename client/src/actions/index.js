@@ -5,8 +5,8 @@ export const CHANGE_CATEGORY='CHANGE_CATEGORY'
 export const FETCH_CATEGORY_SUCCESS='FETCH_CATEGORY'
 export const FETCH_POSTS_SUCCESS='FETCH_POSTS_SUCCESS'
 
-export const FETCH_POST='FETCH_POST'
-export const FETCH_COMMENTS='FETCH_COMMENTS'
+export const FETCH_POST_SUCCESS='FETCH_POST_SUCCESS'
+export const FETCH_COMMENTS_SUCCESS='FETCH_COMMENTS_SUCCESS'
 export const UPDATE_POST='UPDATE_POST'
 export const UPDATE_COMMENT='UPDATE_COMMENT'
 export const LOAD_ERROR='LOAD_ERROR'
@@ -56,16 +56,16 @@ export function fetchPostsSuccess ({posts}){
   }
 }
 
-export function fetchPost ({post}){
+export function fetchPostSuccess ({post}){
   return {
-    type: FETCH_POST,
+    type: FETCH_POST_SUCCESS,
     post
   }
 }
 
-export function fetchComments ({comments}){
+export function fetchCommentsSuccess ({comments}){
   return {
-    type: FETCH_COMMENTS,
+    type: FETCH_COMMENTS_SUCCESS,
     comments
   }
 }
@@ -88,4 +88,35 @@ export function categoryFetchData() {
         dispatch(fetchCategorySuccess({categories}))
       });
   };
+}
+
+export function getselectedPost(id) {
+  return (dispatch) => {
+      dispatch(loadInProgress(true));
+      ReadableAPI.getPost(id).then(post => {
+        dispatch(loadInProgress(false));
+        dispatch(fetchPostSuccess({post}))
+      });
+  };
+}
+
+export function getComments(id) {
+  return (dispatch) => {
+      dispatch(loadInProgress(true));
+      ReadableAPI.getComments(id).then(comments => {
+        dispatch(loadInProgress(false));
+        dispatch(fetchCommentsSuccess({comments}))
+      });
+  };
+}
+
+export function voteChange(id, vote){
+  return (dispatch) => {
+    dispatch(loadInProgress(true));
+    ReadableAPI.voteChange(id, vote).then(response => {
+      dispatch(loadInProgress(false));
+       console.log(response) 
+      //dispatch(fetchCommentsSuccess({comments}))
+    });
+  };  
 }

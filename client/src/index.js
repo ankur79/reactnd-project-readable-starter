@@ -14,6 +14,7 @@ import './bootstrap.css';
 import './font-awesome.css';
 import App from './components/App';
 import AddPost from './components/AddPost';
+import SelectedPost from './components/SelectedPost';
 
 import registerServiceWorker from './registerServiceWorker';
 // Create a history of your choosing (we're using a browser history in this case)
@@ -39,6 +40,7 @@ ReactDOM.render(<Provider store={store}>
 								<h1>Readable</h1>
 							</div>
 							<Route exact path="/" component={App}/> 
+							<Route path="/posts/:id" component={SelectedPost}/> 
 							<Route path="/posts/add" component={AddPost}/> 
 						</div>	
 					</ConnectedRouter>

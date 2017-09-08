@@ -29,4 +29,11 @@ export const getPost = (id) =>
 export const getComments = (id) =>
   fetch(`${api}/posts/${id}/comments`, { headers })
     .then(res => res.json())
-    .then(data => data)              
+    .then(data => data)     
+
+export const voteChange = (id, vote) =>
+    fetch(`${api}/comments/${id}`, { method: 'POST' , body: JSON.stringify(vote), headers })
+      .then(res => res.json())
+      .then(data => data)         
+
+
