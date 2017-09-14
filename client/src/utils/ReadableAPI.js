@@ -8,7 +8,8 @@ if (!token)
 
 const headers = {
   'Accept': 'application/json',
-  'Authorization': token
+  'Authorization': token,
+  'Content-Type': 'application/json'
 }
 
 export const getAllCategories = () =>
@@ -26,14 +27,40 @@ export const getPost = (id) =>
     .then(res => res.json())
     .then(data => data) 
 
+export const addPost = (id, post) => 
+    fetch(`${api}/posts`, { method: "POST" , headers, body: JSON.stringify(post) })
+      .then(res => res.json())
+      .then(data => data)
+
+export const updatePost = (id, post) => 
+    fetch(`${api}/posts/${id}`, { method: 'PUT' , headers, body: JSON.stringify(post) })
+      .then(res => res.json())
+      .then(data => data)
+
 export const getComments = (id) =>
   fetch(`${api}/posts/${id}/comments`, { headers })
     .then(res => res.json())
     .then(data => data)     
 
-export const voteChange = (id, vote) =>
-    fetch(`${api}/comments/${id}`, { method: 'POST' , body: JSON.stringify(vote), headers })
+export const voteChange = (id, vote, section = 'comments') =>
+    fetch(`${api}/${section}/${id}`, { method: 'POST' , headers, body: JSON.stringify({"option":vote}) })
       .then(res => res.json())
-      .then(data => data)         
+      .then(data => data)      
+
+export const updateComment = (id, comment) => 
+    fetch(`${api}/comments/${id}`, { method: 'PUT' , headers, body: JSON.stringify({"body":comment, "timestamp":new Date().getTime()}) })
+      .then(res => res.json())
+      .then(data => data)
+
+export const addComment = (id, comment) => 
+    fetch(`${api}/comments`, { method: 'POST' , headers, body: JSON.stringify(comment) })
+      .then(res => res.json())
+      .then(data => data)      
+
+export const deleteComment = (id) => 
+    fetch(`${api}/comments/${id}`, { method: 'DELETE' , headers, body: JSON.stringify({"id":id}) })
+      .then(res => res.json())
+      .then(data => data)           
+      
 
 

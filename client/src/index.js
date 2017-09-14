@@ -31,7 +31,7 @@ const store = createStore(
   reducers,composedEnhancers
 );
 
-console.log(store.getState())
+
 
 ReactDOM.render(<Provider store={store}>
 					<ConnectedRouter history={history}>
@@ -40,8 +40,9 @@ ReactDOM.render(<Provider store={store}>
 								<h1>Readable</h1>
 							</div>
 							<Route exact path="/" component={App}/> 
-							<Route path="/posts/:id" component={SelectedPost}/> 
-							<Route path="/posts/add" component={AddPost}/> 
+							<Route  path="/cat/:id" component={App}/> 
+							<Route  path="/posts/:id" component={SelectedPost}/> 
+							<Route  path="/add/:kind/:id" component={AddPost}/> 
 						</div>	
 					</ConnectedRouter>
 				</Provider>, document.getElementById('root'));

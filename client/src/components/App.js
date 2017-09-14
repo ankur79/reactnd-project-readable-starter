@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { changeOrder, changeCategory, categoryFetchData, postsFetchData } from '../actions'
+import { changeOrder, changeCategory, categoryFetchData, postsFetchData, postVote } from '../actions'
 import * as ReadableAPI from '../utils/ReadableAPI';
 
 import CategorySelect from  './CategorySelect';
 import OrderSelect from  './OrderSelect';
-import * as moment from 'moment';
+import PostBox from './PostBox'
 import './App.css';
 
 class App extends Component {
@@ -24,9 +24,13 @@ class App extends Component {
     this.props.onpostsFetchData();
   }
 
+  getGuid(){
+    return "a"+new Date().getTime();
+  }
+
   sortedData(){
     const { posts, categoryList, orderList } = this.props
-    let allPosts = posts.posts;
+    let allPosts = posts.posts === undefined ? [] : posts.posts;
     allPosts = allPosts.sort((a, b) => b[orderList.sortOrder] - a[orderList.sortOrder]);
     allPosts = categoryList.category !== "all" ? allPosts.filter(post => post.category === categoryList.category) : allPosts;
     return allPosts
@@ -39,7 +43,7 @@ class App extends Component {
   }
 
   render() {
-    const {orderList, onOrderChange, categoryList, onCategoryChange, loadreducer} = this.props
+    const {orderList, onOrderChange, categoryList, onCategoryChange, loadreducer, onVoteChange} = this.props
 
     return (
       <div >
@@ -70,7 +74,7 @@ class App extends Component {
                     }}/>        
                   </div>
                 <div className="col-md-6">
-                    <Link to="/posts/add" className="btn btn-primary">Add Post</Link>
+                    <Link to={"/add/new/"+this.getGuid()} className="btn btn-primary">Add Post</Link>
                 </div>
               </div>
               <div className="row">
@@ -78,14 +82,11 @@ class App extends Component {
                  <ol>
                   {
                     this.sortedData().map(post => {
-                      const timeStamp = moment(post.timestamp).format('MMMM DD, YYYY HH:MM');
-                      return <Link key={post.id} to={`/posts/${post.id}`}>
-                        <li className="post content-container">
-                          <h4><span className="badge">{post.voteScore}</span> {post.title}</h4>
-                          <div>{post.body}</div>
-                          <div className="time-stamp">{timeStamp}</div>
-                        </li>
-                      </Link>
+                      
+                      return <li  key={post.id} className="col-md-12 post content-container">
+                                <PostBox post={post} onVoteChange={(id, vote) => onVoteChange(id, vote)}/>
+                            </li>
+                      
                     })
                   }
                  </ol>
@@ -113,7 +114,8 @@ function mapDispatchToProps (dispatch) {
     onOrderChange: (data) => dispatch(changeOrder(data)),
     onCategoryChange: (data) => dispatch(changeCategory(data)),
     oncategoryFetchData: () => dispatch(categoryFetchData()),
-    onpostsFetchData: () => dispatch(postsFetchData())
+    onpostsFetchData: () => dispatch(postsFetchData()),
+    onVoteChange: (id, vote) => dispatch(postVote(id, vote))
   }
 }
 

@@ -8,6 +8,8 @@ function order (state = initialOrderState, action) {
   switch (action.type) {
     case CHANGE_ORDER :
       return {sortOrder, all:state.all}
+    case "@@router/LOCATION_CHANGE" :
+      return {sortOrder :"voteScore", all:state.all}      
     default :
       return state
   }

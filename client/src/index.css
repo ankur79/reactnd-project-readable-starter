@@ -25,16 +25,27 @@ li{
     border-left-color: #428bca;
 }
 
-.content-container.comment{
-    border-left-color: #1C704B;
+.comment{
+    margin: 5px 0;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 5px 0;
 }
 
+.deleted{
+    display: none;
+}
 .content-container h4 {
     color: #428bca;
 }
 
 .time-stamp{
 	font-size: 12px;
+    color: #989898;
+}
+
+.user-icon{
+    float: left;
+    margin-right: 5px;
     color: #989898;
 }
 
@@ -49,5 +60,17 @@ li{
 .vote-button{
     display: flex;
     flex-direction: column;
-    width:25px;
+    align-items: center;
+}
+
+.content-body{
+    height:auto;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.btn-container{
+    margin-top: 5px; 
+}
+.badge-success{
+    background-color: #699a69 !important;
 }
