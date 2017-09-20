@@ -20,7 +20,12 @@ export const getAllCategories = () =>
 export const getAllPost = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
-    .then(data => data)    
+    .then(data => data) 
+    
+export const getCatPost = (cat) =>
+  fetch(`${api}/${cat}/posts`, { headers })
+    .then(res => res.json())
+    .then(data => data)     
 
 export const getPost = (id) =>
   fetch(`${api}/posts/${id}`, { headers })
@@ -36,6 +41,11 @@ export const updatePost = (id, post) =>
     fetch(`${api}/posts/${id}`, { method: 'PUT' , headers, body: JSON.stringify(post) })
       .then(res => res.json())
       .then(data => data)
+
+export const deletePost = (id) => 
+    fetch(`${api}/posts/${id}`, { method: 'DELETE' , headers, body: JSON.stringify({"id":id})})
+      .then(res => res.json())
+      .then(data => data)  
 
 export const getComments = (id) =>
   fetch(`${api}/posts/${id}/comments`, { headers })

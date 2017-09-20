@@ -1,10 +1,10 @@
 import * as ReadableAPI from '../utils/ReadableAPI';
+import { push } from "react-router-redux";
 
 export const CHANGE_ORDER = 'CHANGE_ORDER'
 export const CHANGE_CATEGORY='CHANGE_CATEGORY'
 export const FETCH_CATEGORY_SUCCESS='FETCH_CATEGORY'
 export const FETCH_POSTS_SUCCESS='FETCH_POSTS_SUCCESS'
-
 export const FETCH_POST_SUCCESS='FETCH_POST_SUCCESS'
 export const FETCH_COMMENTS_SUCCESS='FETCH_COMMENTS_SUCCESS'
 export const POST_UPDATE='POST_UPDATE'
@@ -40,10 +40,9 @@ export function changeOrder ({sortOrder}){
 }
 
 export function changeCategory ({category}){
-  return {
-    type: CHANGE_CATEGORY,
-    category
-  }
+  return (dispatch) => {
+    dispatch(push("/cat/"+category));
+  }; 
 }
 
 export function fetchCategorySuccess ({categories}){
@@ -104,19 +103,20 @@ export function newComment (comment){
   }
 }
 
-export function postAdded (){
-  return{
-    type: "@@router/LOCATION_CHANGE",
-    payload:{pathname: "/"}
-
-  }
-}
-
-
 export function postsFetchData() {
   return (dispatch) => {
       dispatch(loadInProgress(true));
       ReadableAPI.getAllPost().then(posts => {
+        dispatch(loadInProgress(false));
+        dispatch(fetchPostsSuccess({posts}))
+      });
+  };
+}
+
+export function postsFetchCatData(cat) {
+  return (dispatch) => {
+      dispatch(loadInProgress(true));
+      ReadableAPI.getCatPost(cat).then(posts => {
         dispatch(loadInProgress(false));
         dispatch(fetchPostsSuccess({posts}))
       });
@@ -152,8 +152,6 @@ export function getComments(id) {
       });
   };
 }
-
-
 
 export function postVote(id, vote, postType="posts"){
   return (dispatch) => {
@@ -200,7 +198,7 @@ export function addPost(id, post){
     dispatch(loadInProgress(true));
     ReadableAPI.addPost(id, post).then(post => {
       dispatch(loadInProgress(false));
-      dispatch(postAdded())
+      dispatch(push("/"));
     });
   };  
 }
@@ -210,7 +208,7 @@ export function editPost(id, post){
     dispatch(loadInProgress(true));
     ReadableAPI.updatePost(id, post).then(post => {
       dispatch(loadInProgress(false));
-      //dispatch(postAdded())
+      dispatch(push("/"));
     });
   };  
 }
@@ -221,6 +219,16 @@ export function deleteComment(id){
     ReadableAPI.deleteComment(id).then(comment => {
       dispatch(loadInProgress(false));
       dispatch(updateComment({comment}))
+    });
+  };  
+}
+
+export function deletePost(id){
+  return (dispatch) => {
+    dispatch(loadInProgress(true));
+    ReadableAPI.deletePost(id).then(post => {
+      dispatch(loadInProgress(false));
+      dispatch(updatePost({post}))
     });
   };  
 }

@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom';
 import { addPost, editPost } from '../actions'
 import CategorySelect from  './CategorySelect';
+
 class AddPost extends Component {
+  
     state = {
       postContent: {
         id: this.props.match.params.id,
@@ -17,31 +19,34 @@ class AddPost extends Component {
 
     componentDidMount(){
       const current =  this.state.postContent;
-      console.log(this.props)
       if(this.props.match.params.kind === "edit"){
         const post = this.props.posts.posts.filter(post => post.id === this.props.match.params.id);
         this.setState({postContent : Object.assign(current, post[0])});
-        //this.setState({postContent : {...current, "category":post[0].category}})
       }
     }
+
     titleChange(e){
       const current =  this.state.postContent;
       this.setState({postContent : {...current, "title":e.target.value}});
     }
+
     bodyChange(e){
       const current =  this.state.postContent;
       this.setState({postContent : {...current, "body":e.target.value}});
     }
+
     catSelect(cat){
       const current =  this.state.postContent;
       this.setState({postContent : {...current, "category":cat}});
     }
+
     submitChange(){
       const method = this.props.match.params.kind === "new" ? "addPost" : "editPost";
       this.props[method](this.state.postContent.id, this.state.postContent);
     }
+
     render(){
-      const {categoryList} = this.props;
+      const { categoryList } = this.props;
       const postKind = this.props.match.params.kind;
       return (
         <div className="col-md-12">
@@ -55,7 +60,7 @@ class AddPost extends Component {
             <div className="form-group">
               <label htmlFor="bodyTxt" className="col-md-2 control-label">Body</label>
               <div className="col-md-10">
-              <textarea value={this.state.postContent.body} onChange={(e) => this.bodyChange(e)} className="form-control" id="bodyTxt" rows="3" placeholder={postKind === "new" ? "New Post" : "Edit Post"}></textarea>
+                <textarea value={this.state.postContent.body} onChange={(e) => this.bodyChange(e)} className="form-control" id="bodyTxt" rows="3" placeholder={postKind === "new" ? "New Post" : "Edit Post"}></textarea>
               </div>
             </div>
             <div className="form-group">
@@ -64,24 +69,23 @@ class AddPost extends Component {
               <CategorySelect categories={categoryList.categories} onCategoryChange={(cat) => this.catSelect(cat)} category={this.state.postContent.category} />
             </div>
           </div>
-
-            <div className="form-group">
-              <div className="col-sm-offset-2 col-md-10">
-                <button onClick={() => this.submitChange()} className="btn btn-primary">Save</button>
-                <Link to="/" className="btn btn-default">Cancel</Link>
-              </div>
+          <div className="form-group">
+            <div className="col-sm-offset-2 col-md-10">
+              <button onClick={() => this.submitChange()} className="btn btn-primary">save</button>
+              <Link to="/" className="btn btn-default">cancel</Link>
             </div>
           </div>
-          </div>
+        </div>
+      </div>
       )
     }
 };
 
 function mapStateToProps(state){
-  console.log(state)
   return{
     categoryList: state.categories,
     posts: state.posts,
+    router: state.router
   }
 }
 

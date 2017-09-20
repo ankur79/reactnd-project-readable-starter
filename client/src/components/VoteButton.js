@@ -11,5 +11,4 @@ const VoteButton = (props) => {
   )
 };
 
-
 export default VoteButton
